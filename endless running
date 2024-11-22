@@ -1,0 +1,58 @@
+const player = document.getElementById("player");
+const ground = document.getElementById("ground");
+
+let playerPosX = 50;
+let playerPosY = 10;
+let gravity = 0.5;
+let jumpPower = 10;
+let isJumping = false;
+
+let groundSpeed = 3;
+
+// Handle player jumping
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Space" && !isJumping) {
+        isJumping = true;
+        playerPosY -= jumpPower;
+    }
+});
+
+// Game loop for player movement and ground scrolling
+setInterval(() => {
+    if (playerPosY < 10) {
+        playerPosY += gravity;
+    } else {
+        isJumping = false;
+    }
+
+    player.style.bottom = playerPosY + "px";
+
+    // Move ground (creating endless effect)
+    ground.style.left = (parseInt(ground.style.left || 0) - groundSpeed) + "px";
+    if (parseInt(ground.style.left) < -100) {
+        ground.style.left = "0px";
+    }
+}, 20);
+
+// Create obstacles
+function createObstacle() {
+    const obstacle = document.createElement('div');
+    obstacle.classList.add('obstacle');
+    document.body.appendChild(obstacle);
+    let posX = 100;
+    obstacle.style.left = posX + "%";
+    let posY = 10;
+    obstacle.style.bottom = posY + "px";
+
+    const obstacleInterval = setInterval(() => {
+        posX -= 1;
+        obstacle.style.left = posX + "%";
+        if (posX < 0) {
+            clearInterval(obstacleInterval);
+            document.body.removeChild(obstacle);
+        }
+    }, 20);
+}
+
+// Generate obstacles every 2 seconds
+setInterval(createObstacle, 2000);
